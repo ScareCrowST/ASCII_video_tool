@@ -1,0 +1,13 @@
+# Python cache & environments
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Video & output files (чтобы не грузить тяжелые видео в репозиторий)
+*.mp4
+*.avi
+*.mkv
+*.mov
+*.webm
+*.gif
