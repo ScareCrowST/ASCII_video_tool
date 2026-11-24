@@ -1,14 +1,15 @@
 @echo off
-title HD ASCII Video Player - Launcher
+title 60 FPS HD ASCII Video Player - Launcher
 
 :MENU
 cls
 echo ========================================================
-echo           ASCII VIDEO PLAYER - SETTINGS
+echo         60 FPS HD ASCII VIDEO PLAYER - SETTINGS
 echo ========================================================
 echo.
 set "VIDEO=video.mp4"
 set /p "VIDEO=Enter video filename [Enter = video.mp4]: "
+if "%VIDEO%"=="" set "VIDEO=video.mp4"
 
 echo.
 echo Select visual filter:
@@ -41,7 +42,8 @@ if "%C_CHOICE%"=="2" set "CHARSET=hacker"
 if "%C_CHOICE%"=="3" set "CHARSET=standard"
 
 echo.
-echo Starting... (Controls: Space = Pause, Left/Right = Seek, F = Filter, C = Charset, +/- = Saturation, Q = Quit)
-py main.py "%VIDEO%" --charset %CHARSET% --filter %FILTER% --font-size 4 --loop
-
+echo Starting...
+py main.py "%VIDEO%" --charset %CHARSET% --filter %FILTER% --font-size 7 --loop
+echo.
+pause
 goto MENU
