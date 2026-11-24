@@ -22,15 +22,16 @@ class CONSOLE_FONT_INFOEX(ctypes.Structure):
 
 
 class TerminalManager:
-    """Настраивает окно cmd.exe на максимальную плотность символов и 24-битный цвет."""
+    """Надежный вывод кадров на весь экран для режима терминала (--terminal)."""
 
     HIDE_CURSOR = "\033[?25l"
     SHOW_CURSOR = "\033[?25h"
     CLEAR_SCREEN = "\033[2J"
     CURSOR_HOME = "\033[H"
+    CLEAR_BELOW = "\033[J"
     RESET_COLOR = "\033[0m"
 
-    def __init__(self, title: str = "Ultra HD ASCII Player", font_size: int = 4, maximize: bool = True) -> None:
+    def __init__(self, title: str = "HD ASCII Player", font_size: int = 6, maximize: bool = True) -> None:
         self.font_size = font_size
         self.maximize = maximize
 
@@ -43,17 +44,15 @@ class TerminalManager:
         user32 = ctypes.windll.user32
         handle = kernel32.GetStdHandle(-11)
 
-
         mode = ctypes.c_ulong()
         if kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
             kernel32.SetConsoleMode(handle, mode.value | 0x0004)
 
-        # Ставим микрошрифт Consolas для предельного разрешения сетки
         font = CONSOLE_FONT_INFOEX()
         font.cbSize = ctypes.sizeof(CONSOLE_FONT_INFOEX)
         font.nFont = 0
-        font.dwFontSize.X = max(2, int(self.font_size * 0.5))
-        font.dwFontSize.Y = max(3, self.font_size)
+        font.dwFontSize.X = max(3, int(self.font_size * 0.5))
+        font.dwFontSize.Y = max(5, self.font_size)
         font.FontFamily = 54
         font.FontWeight = 400
         font.FaceName = "Consolas"
@@ -70,13 +69,13 @@ class TerminalManager:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
-        sys.stdout.write(self.RESET_COLOR + self.SHOW_CURSOR + "\n")
+        sys.stdout.write(self.RESET_COLOR + self.CLEAR_SCREEN + self.CURSOR_HOME + self.SHOW_CURSOR)
         sys.stdout.flush()
 
     def get_size(self) -> Tuple[int, int]:
-        size = shutil.get_terminal_size(fallback=(320, 110))
+        size = shutil.get_terminal_size(fallback=(180, 60))
         return size.columns, size.lines
 
     def render(self, frame_str: str) -> None:
-        sys.stdout.write(self.CURSOR_HOME + frame_str)
+        sys.stdout.write(self.CURSOR_HOME + frame_str + self.CLEAR_BELOW)
         sys.stdout.flush()
